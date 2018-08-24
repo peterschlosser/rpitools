@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # enables HTACCESS overrides in default apache 2 server configuration
 # with debian raspberry pi operating systems.
@@ -24,7 +24,7 @@
 #	</Directory>
 
 WWW_CFG=/etc/apache2/apache2.conf
-CMD_APCHECTL=/usr/sbin/apachctl
+CMD_APACHE=/usr/sbin/apachectl
 CMD_AWK=/usr/bin/awk
 CMD_GREP=/bin/grep
 CMD_LS=/bin/ls
@@ -83,14 +83,15 @@ if [[ HTACCESS_NONE -eq 1 || HTACCESS_ENABLED -eq 0 ]]; then
   WWW_CFG1=$(rotate $WWW_CFG)
   # comment out "AllowOverride None" and 
   # append "AllowOverride AuthConfig"
-#  $CMD_SUDO \
-#    $CMD_SED -e "${SED_SELECT}s/\([[:space:]]\+AllowOverride None\)/#\1\n\tAllowOverride AuthConfig/" \
-#      $WWW_CFG1 > $WWW_CFG
   $CMD_SUDO \
     $CMD_SH \
-    -c "${CMD_SED} -e \"${SED_SELECT}s/\([[:space:]]\+AllowOverride None\)/#\1\n\tAllowOverride AuthConfig/\" ${WWW_CFG1} > ${WWW_CFG}"
-#  $CMD_SUDO \
-#    $CMD_APCHECTL restart
+    -c "${CMD_SED} \
+      -e \"${SED_SELECT}s/\([[:space:]]\+AllowOverride None\)/#\1\n\tAllowOverride AuthConfig/\" \
+      ${WWW_CFG1} \
+      > ${WWW_CFG}"
+  # restart apache
+  $CMD_SUDO \
+    $CMD_APACHE restart
 fi
 
 echo "htaccess directives enabled."
