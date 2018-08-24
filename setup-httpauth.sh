@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # enables HTACCESS overrides in default apache 2 server configuration
 # with debian raspberry pi operating systems.
@@ -83,6 +83,7 @@ if [[ HTACCESS_NONE -eq 1 || HTACCESS_ENABLED -eq 0 ]]; then
   WWW_CFG1=$(rotate $WWW_CFG)
   # comment out "AllowOverride None" and 
   # append "AllowOverride AuthConfig"
+  echo "modifying apache conf: ${WWW_CFG}..."
   $CMD_SUDO \
     $CMD_SH \
     -c "${CMD_SED} \
@@ -90,6 +91,7 @@ if [[ HTACCESS_NONE -eq 1 || HTACCESS_ENABLED -eq 0 ]]; then
       ${WWW_CFG1} \
       > ${WWW_CFG}"
   # restart apache
+  echo "restarting apache..."
   $CMD_SUDO \
     $CMD_APACHE restart
 fi
